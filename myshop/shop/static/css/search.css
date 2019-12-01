@@ -1,0 +1,22 @@
+.search {margin: 0 0 20px; text-align: left;}
+.search #search {width: 280px;}
+.search .search-btn {height:36px; width: 80px}
+p {margin-bottom: 30px;}
+@media only screen and (max-width: 767px){
+    .search #search {display: inline;}
+}
+@media only screen and (max-width: 480px){
+    .search {text-align: left;}
+    .search #search {
+        width: 220px;
+        height: 34px;
+        font-size: 11px;
+        display: inline;
+    }
+    .search .search-btn {
+        font-size: 11px;
+        height:34px;!important;
+        width: 60px;!important;
+        padding: 0;
+    }
+}

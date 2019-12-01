@@ -1,0 +1,66 @@
+{% extends "shop/base.html" %}
+
+{% load static %}
+
+{% load search_tags %}
+{% load modify_query_tag %}
+
+{% block title %}
+	 - Результати пошуку
+{% endblock title %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/search.css" %}">
+{% endblock extra_css %}
+{% block content %}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-sm-7 col-md-6">
+
+                {% search_box request %}
+
+            </div>
+
+                <div class="col-xs-12 col-sm-5 col-md-6 sort">
+                    <h6>Сортування:
+                    назва: <a href="{% modify_query "page" sort='namea' %}" {% if request.GET.sort == 'namea' %}class="selected"{% endif %}>А - Я</a> |
+                        <a href="{% modify_query "page" sort='named' %}" {% if request.GET.sort == 'named' %}class="selected"{% endif %}>Я - А</a>
+					ціна: <a href="{% modify_query "page" sort='pricea' %}" {% if request.GET.sort == 'pricea' %}class="selected"{% endif %}>зростання</a> |
+                        <a href="{% modify_query "page" sort='priced' %}" {% if request.GET.sort == 'priced' %}class="selected"{% endif %}>спадання</a>
+                    </h6>
+				</div>
+       	</div>
+
+		<div class="col-xs-12 col-sm-12 col-md-12">
+            <h4>Результати пошуку</h4>
+                <p>За Вашим запитом <strong>"{{ q }}"</strong> знайдено <strong>{{ matches_len }}</strong> {{ message }}</p>
+                <div class="container-fluid">
+                    {% for product in matches %}
+                        <div class="col-xs-6 col-sm-4 col-md-3 products">
+                            <div class="product_item">
+                                <div class="product_thumb">
+                                    <a href="{{ product.get_absolute_url }}">
+                                        <img src="{% if product.images.first.image %}{{ product.images.first.image.url }}{% else %}
+                                            {% static "img/no_image.png" %}{% endif %}">
+                                    </a>
+                                </div>
+                                <div class="product_title">
+                                    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                                    <p>{{ product.price }} грн.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+		</div>
+    </div>
+{% endblock content %}
+
+{% block pagination %}
+    {% if is_paginated %}
+        {% with object_list=matches %}
+        <div class="paginator">
+            {% include "shop/pagination.html" %}
+        </div>
+        {% endwith %}
+    {% endif %}
+{% endblock pagination %}

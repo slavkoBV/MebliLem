@@ -1,0 +1,86 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+	<ol class="breadcrumb">
+      <li><a href="{% url 'shop:main_page' %}">Головна</a></li>
+      <li><a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a></li>
+      <li class="active">{{ product.name }}</li>
+    </ol>
+		{% if product.images.first.image.url %}
+			<div id="gallery">
+			    <div id="panel">
+                    <div class="image_container">
+                        <a data-fancybox href="{{ product.images.first.image.url }}">
+                            <img id="largeImage" src="{{ product.images.first.image.url }}">
+                        </a>
+                    </div>
+			    </div>
+			    <div id="thumbs">
+                    {% for image in product.images.all %}
+                        <img src="{{ image.image.url }}"/>
+                    {% endfor %}
+			    </div>
+			</div>
+		{% else %}
+			<div class="noimage">
+				<img src="{% static "img/no_image.png" %}">
+			</div>
+		{% endif %}
+		<div class="detail-description">
+			<h2>{{ product.name }}</h2>
+			<p class="price">{{ product.price }} грн.</p>
+            <p style="color: red">Ціну уточнюйте у менеджера</p>
+			<form action="{% url "cart:cart_add" product.id %}" method="post">
+				{{ cart_product_form }}
+				{% csrf_token %}
+				<input class="btn btn-primary" type="submit" value="Додати до кошика">
+			</form>
+			<div class=product-description>
+			    <h3 align="center">Опис товару</h3>
+                <table class="table table-striped table-hover product-features">
+                    <tbody>
+                        {% if product.producer %}
+                            <tr>
+                                <td><strong>Виробник</strong></td>
+                                <td align="center">{{ product.producer }}</td>
+                            </tr>
+                        {% endif %}
+                            {% for prod_f in product_features %}
+                                <tr>
+                                    <td><strong>{{ prod_f.feature.name }}</strong></td>
+                                    <td align="center">{{ prod_f.value }}{% if prod_f.unit %} {{ prod_f.unit }}{% endif %}</td>
+                                </tr>
+                            {% endfor %}
+                    </tbody>
+                </table>
+			</div>
+		</div>
+		{% if subitems %}
+        <div class="subitem col-xs-12 col-sm-12 col-md-12">
+            <h4>Можливі компоненти товару:</h4>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+				{% for subitem in subitems %}
+                <div class="col-xs-12 col-sm-4 col-md-3 products">
+                    <div class="product_item">
+                        <div class="product_thumb">
+                            <a href="{{ subitem.get_absolute_url }}">
+							<img src="{% if subitem.images.first.image.url %}
+                                {{ subitem.images.first.image.url }}
+                            {% else %}
+							    {% static "img/no_image.png" %}
+                            {% endif %}">
+                            </a>
+                        </div>
+                        <div class="product_title">
+                            <a href="{{ subitem.get_absolute_url }}">{{ subitem.name }}</a>
+                            <p>{{ subitem.price }} грн.</p>
+                        </div>
+                    </div>
+                </div>
+				{% endfor %}
+		</div>
+        {% endif %}
+</div>
+{% endblock content %}

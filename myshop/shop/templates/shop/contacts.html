@@ -1,0 +1,21 @@
+{% extends "shop/base.html" %}
+
+{% load static %}
+
+{% block title %}
+	- Контакти
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+	<div class="static_page">
+		<h3>Контакти</h3>
+		<p>Ви можете зв'язатися з нами за телефоном або електронною адресою.<br>
+		Дзвоніть або пишіть, Вам завжди раді!</p>
+		<p><img src="{% static "img/kyivstar_logo.png" %}" height="30" width="30"><strong> +38 (068) 500 16 00</strong></p>
+		<p><img src="{% static "img/vodafone.png" %}" height="30" width="30"><strong> +38 (066) 30 111 20</strong></p>
+		<p class="email">e-mail: <a href="mailto:meblilem@ukr.net">meblilem@ukr.net</a></p>
+	</div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,78 @@
+.carousel {margin-top: 50px;}
+.carousel-wrapper {
+   margin: 10px 30px; /* отступы для стрелок */
+   overflow: hidden; /* скрываем содержимое, выходящее за рамки основной области */
+   position:relative;
+}
+.carousel-items {
+   width: 10000px; /* устанавливаем большую ширину для набора элементов */
+   position: relative; /* позиционируем блок относительно основной области карусели */
+}
+.carousel-block {
+   float: left; /* выстраиваем все элементы карусели в ряд */
+   width: 170px; /* задаём ширину каждого элемента */
+   padding: 10px 15px 10px 0; /* делаем оступы, чтобы элементы не сливались */
+}
+.carousel-block img{
+	display:block;
+    height: 70px;
+}
+/*********** BUTTONS ***********/
+.carousel-button-left img, .carousel-button-right img{
+   width: 25px;
+   height: 30px;
+   position: relative;
+   top: 25px;
+   cursor: pointer;
+   text-decoration:none;
+}
+.carousel-button-left img {float: left;}
+.carousel-button-right img{float: right;}
+/*********** SHADOW ***********/
+.shadow{
+    margin-top: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+/*--------MEDIA QUERIES----------------------*/
+@media only screen and (max-width: 1280px){
+    .carousel-block {width: 175px;}
+}
+@media only screen and (max-width: 1024px){
+    .carousel-block {width: 159px;}
+    .carousel-block img {height: 65px;}
+}
+@media only screen and (max-width: 992px){
+    .carousel-block {width: 154px;}
+}
+@media only screen and (max-width: 960px){
+    .carousel-block {width: 147px;}
+}
+@media only screen and (max-width: 768px){
+    .carousel-block {width: 141px;}
+    .carousel-block img {height: 62px;}
+}
+@media only screen and (max-width: 732px){
+    .carousel-block {width: 134px;}
+    .carousel-block img {height: 56px;}
+}
+@media only screen and (max-width: 712px){
+    .carousel-block {width: 125px;}
+    .carousel-block img {height: 54px;}
+}
+@media only screen and (max-width: 667px){
+    .carousel-block {width: 117px;}
+    .carousel-block img {height: 54px;}
+}
+@media only screen and (max-width: 510px){
+    .carousel-block {width: 0.98%;}
+}
+@media only screen and (max-width: 480px){
+    .carousel-block {
+     width: 0.95%;
+     padding: 10px 10px 5px 0;
+    }
+}
+@media only screen and (max-width: 384px){
+    .carousel-block {width: 5%; padding-left: 0.9%; }
+}

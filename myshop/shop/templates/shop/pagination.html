@@ -1,0 +1,36 @@
+		{% load modify_query_tag %}
+        {% with manufacturer=request.GET.manufacturer %}
+        <ul class="pagination">
+			<li>
+				{% if object_list.has_previous %}
+					<a href="{% modify_query page=object_list.previous_page_number  %}">
+							&laquo;
+					</a>
+				{% else %}
+					<li><span>&laquo;</span></li>
+				{% endif %}
+			</li>
+				{% for i in page_range %}
+					{% if i == DOT %}
+						<li><span>...</span></li>
+					{% elif i == object_list.number %}
+						<li class="active"><span>{{ i }}</span></li>
+					{% else %}
+						<li>
+							<a href="{% modify_query page=i  %}">
+								{{ i }}
+							</a>
+						</li>
+					{% endif%}
+				{% endfor %}
+			<li>
+				{% if object_list.has_next %}
+					<a href="{% modify_query page=object_list.next_page_number %}">
+						&raquo;
+					</a>
+				{% else %}
+					<li><span>&raquo;</span></li>
+				{% endif %}
+			</li>
+		</ul>
+        {% endwith %}

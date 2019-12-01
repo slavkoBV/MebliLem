@@ -1,0 +1,77 @@
+{% extends "shop/base.html" %}
+{% load static %}
+
+{% block title %}
+	- Ваш кошик
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+	<h2>Ваш кошик</h2>
+	{% if cart %}
+	<table class="table-cart">
+		<thead>
+			<tr>
+				<th id="image">Зображення</th>
+				<th>Товар</th>
+				<th>Кількість</th>
+				<th></th>
+				<th>Ціна од.</th>
+				<th>Ціна</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in cart %}
+				{% with product=item.product %}
+					<tr>
+						<td id="image">
+							<a href="{{ product.get_absolute_url }}">
+								<img src="{% if product.images.first.image.url %}{{ product.images.first.image.url }}{% else %}
+								{% static "img/no_image.png" %}{% endif %}">
+							</a>
+						</td>
+                        <td><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></td>
+						<td>
+							<form action="{% url "cart:cart_add" product.id %}" method="post">
+								{{ item.update_quantity_form.quantity }}
+								{{ item.update_quantity_form.update }}
+								<input class="btn btn-primary" type="submit" value="Оновити">
+								{% csrf_token %}
+							</form>
+
+						</td>
+						<td>
+							<a class="delete-button" href="{% url "cart:cart_remove" product.id %}">
+                                <img src="{% static 'img/delete.png' %}">
+                            </a>
+						</td>
+						<td class="num">{{ item.price }} грн.</td>
+						<td class="num">{{ item.total_price }} грн.</td>
+					</tr>
+				{% endwith %}
+			{% endfor %}
+					<tr class="total">
+						<td>Всього</td>
+						<td class="second-td"></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td class="num">{{ cart.get_total_price }} грн.</td>
+					</tr>
+		</tbody>
+	</table>
+	{% else %}
+	<p><strong>Ви ще нічого не замовили.</strong></p>
+	{% endif %}
+	<p class="text-right">
+		<a href="{% url "shop:main_page" %}" class="btn btn-default">Продовжити покупки</a>
+		<a {% if cart|length >= 1 %}
+				href="{% url "orders:order_create" %}"
+			{% else %}
+				href="#"
+			{% endif %} 
+			class="btn btn-primary">Оформити
+		</a>
+	</p>
+</div>
+{% endblock content %}

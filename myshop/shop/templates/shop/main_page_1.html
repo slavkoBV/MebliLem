@@ -1,0 +1,83 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load search_tags %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/categories.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/products.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/carousel.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/search.css" %}">
+{% endblock extra_css %}
+{% block content %}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-12">
+                {% search_box request %}
+            </div>
+        </div>
+		<div class="category">
+            {% for c in categories %}
+                <div class="category_item">
+                    <div class="category_thumb">
+                        <a href="{{ c.get_absolute_url }}">
+                            {% if c.image %}
+                                <img src="{{ c.image.url }}">
+                            {% endif %}
+                        </a>
+                    </div>
+                    <div class="category_title">
+                        <a href="{{ c.get_absolute_url }}">
+                            {{ c.name }}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!--
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            {% for post in posts %}
+                <div class="blog_post">
+                    <h4>{{ post.title }}</h4>
+                    <p>Опубліковано {{ post.date_published }}</p>
+                    <img src="{{ post.image_thumb.url }}">
+                    <p>{{ post.short_content }}</p>
+                </div>
+            {% endfor %}
+        </div>-->
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <h4>Наші виробники:</h4>
+            <!----Carousel------------------------------------------------------------->
+            <div class="carousel shadow">
+                <div class="carousel-button-left">
+                    <img src="{% static "img/carousel-left.png" %}"/>
+                </div>
+                <div class="carousel-button-right">
+                    <img src="{% static "img/carousel-right.png" %}"/>
+                </div>
+                <div class="carousel-wrapper">
+                    <div class="carousel-items">
+                        {% for manufacturer in manufacturers %}
+                            {% if manufacturer.image %}
+                                <div class="carousel-block">
+                                    <img src="{{ manufacturer.image.url }}">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <!-- End of Carousel-->
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <p></p>
+            <h4>Наші партнери:</h4>
+            <div class="container-fluid">
+                <a id="banner" href="http://mozaika.net.ua" target="_blank">
+                    <img src="{% static "img/mozaika-banner.gif" %}" height="100px" width="auto">
+                </a>
+                <a href="http://fc-sokil-glynia.at.ua" target="_blank">
+                    <img id="banner" src="{% static "img/FC_Sokil_Glyniany.jpg" %}" height="120px" width="auto">
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

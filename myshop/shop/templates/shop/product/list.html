@@ -1,0 +1,126 @@
+{% extends "shop/base.html" %}
+{% load static %}
+{% load search_tags %}
+{% load modify_query_tag %}
+{% block title %}
+	{% if category %} - {{ category.name }}{% endif %}
+{% endblock title %}
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static "css/search.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/products.css" %}">
+{% endblock extra_css %}
+{% block content %}
+	<div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-sm-7 col-md-6">
+                {% search_box request %}
+            </div>
+				<div class="col-xs-12 col-sm-5 col-md-6 sort">
+                    <h6>Сортування:
+                    назва: <a href="{% modify_query "page" sort='namea' %}" {% if request.GET.sort == 'namea' %}class="selected"{% endif %}>А - Я</a> |
+                        <a href="{% modify_query "page" sort='named' %}" {% if request.GET.sort == 'named' %}class="selected"{% endif %}>Я - А</a>
+					ціна: <a href="{% modify_query "page" sort='pricea' %}" {% if request.GET.sort == 'pricea' %}class="selected"{% endif %}>зростання</a> |
+                        <a href="{% modify_query "page" sort='priced' %}" {% if request.GET.sort == 'priced' %}class="selected"{% endif %}>спадання</a>
+                    </h6>
+				</div>
+       	</div>
+		<div class="aside-toggle">
+			<button type="button">Категорії</button>
+		</div>
+            <aside class="col-xs-12 col-sm-2 sidebar">
+                <h4 id="category">Категорії</h4>
+                    <ul class="nav navbar nav-pills nav-stacked">
+                        {% for c in categories %}
+                        <li role="presentation" {% if category.slug == c.slug %}class="brand-nav active"{% endif %}>
+                            <a href="{{ c.get_absolute_url }}" role="tab">{{ c.name }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+            </aside>
+            <div class="filter-toggle">
+			    <button type="button">Фільтри</button>
+		    </div>
+
+            <div class="col-xs-12 col-sm-2 col-sm-push-8 filters">
+                <h4 id="filter">Фільтри</h4>
+                    <a href="{{ category.get_absolute_url }}">Скинути всі фільтри</a>
+                <div class="container-fluid">
+                    <h5>Виробники:</h5>
+                        {% for manufacturer, num in facets.categories.manufacturers %}
+                            <li>
+                                {% if num > 0 %}
+                                <a {% if facets.selected.producer == manufacturer.name %}class="active"{% endif %} href="{% modify_query "page" producer=manufacturer %}">
+                                    {{ manufacturer }} - ({{ num }})
+                                </a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    <h5>Ціна:</h5>
+                        {% for price_range, pr_count in facets.categories.price_ranges %}
+                            <li>
+                                <a {% if facets.selected.price == price_range %}class="active" {% endif %}href="{% modify_query "page" price=price_range %}">
+                                    {% if pr_count > 0 %}{{ price_range }} - ({{ pr_count }}){% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    <h5>Ширина:</h5>
+                        {% for width, count in facets.categories.widths %}
+                            <li>
+                                <a {% if facets.selected.width == width %}class="active" {% endif %}href="{% modify_query "page" width=width %}">
+                                    {% if count > 0 %}{{ width }} - ({{ count }}){% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                     <h5>Висота:</h5>
+                        {% for height, count in facets.categories.heights %}
+                            <li>
+                                <a {% if facets.selected.height == height %}class="active" {% endif %}href="{% modify_query "page" height=height %}">
+                                    {% if count > 0 %}{{ height }} - ({{ count }}){% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    <h5>Глибина:</h5>
+                        {% for depth, count in facets.categories.depths %}
+                            <li>
+                                <a {% if facets.selected.depth == depth %}class="active" {% endif %}href="{% modify_query "page" depth=depth %}">
+                                    {% if count > 0 %}{{ depth }} - ({{ count }}){% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-8 col-sm-pull-2">
+                <h4 class="titles">{{ category.name }}</h4>
+                <div class="container-fluid">
+                    {% for product in products %}
+                        <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 product">
+                            <div class="product-item">
+                                <div class="product-thumb">
+                                    <a href="{{ product.get_absolute_url }}">
+                                        <img src="{% if product.images.first.image %}{{ product.images.first.image.url }}{% else %}
+                                            {% static "img/no_image.png" %}{% endif %}">
+                                    </a>
+                                </div>
+                                <div class="product_title">
+                                    <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>
+                                    <p>{{ product.price }} грн.</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+			</div>
+
+        </div>
+
+{% endblock content %}
+{% block pagination %}
+    {% if is_paginated %}
+        {% with object_list=products %}
+        <div class="paginator">
+            {% include "shop/pagination.html" %}
+        </div>
+        {% endwith %}
+    {% endif %}
+{% endblock pagination %}
