@@ -4,7 +4,6 @@ from functools import reduce
 from django.shortcuts import render, get_object_or_404
 
 from .models import Category, Product, Catalog, Manufacturer, ProductFeature
-from blogs.models import Post
 from cart.forms import CartAddProductForm
 from shop.utils import paginate
 from shop.filters import get_filters, get_value_and_counts, get_values_ranges
@@ -15,11 +14,10 @@ def main_page(request):
     categories = Category.objects.all()
     last_products = Product.objects.all().order_by('-created')[:8]
     manufacturers = Manufacturer.objects.all()
-    posts = Post.objects.all()
     return render(request, 'shop/main_page_1.html', {'categories': categories,
                                                      'last_products': last_products,
-                                                     'manufacturers': manufacturers,
-                                                     'posts': posts})
+                                                     'manufacturers': manufacturers
+                                                     })
 
 
 def product_list(request, category_slug):
