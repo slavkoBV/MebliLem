@@ -1,6 +1,8 @@
 import math
 from django.db.models import Q
 
+from shop.constants import DIMENSIONS
+
 
 def get_clean_values_list(values_list):
     clean_list = []
@@ -63,13 +65,6 @@ def get_value_and_counts(object_list, values_list, value_name):
         return [(value, 0) for value in values_list]
 
 
-feature_map = {
-    'width': 'Ширина',
-    'height': 'Висота',
-    'depth': 'Глибина'
-}
-
-
 def get_filters(data: dict):
     filter_parameters = data.keys()
     filters = []
@@ -79,7 +74,7 @@ def get_filters(data: dict):
                 if param in ('width', 'depth', 'height'):
                     filters.append(eval('Q(productfeature__feature__name="{feature}") '
                                         '& Q(productfeature__value__range=(map(int, "{value}".split("-"))))'
-                                        .format(feature=feature_map[param], value=data[param])))
+                                        .format(feature=DIMENSIONS[param][0], value=data[param])))
                 else:
                     filters.append(eval('Q({}__range=(map(int, "{}".split("-"))))'.format(param, data[param])))
             else:

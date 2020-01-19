@@ -1,6 +1,3 @@
-import operator
-from functools import reduce
-
 from django.shortcuts import render, get_object_or_404
 
 from .models import Category, Product, Catalog, Manufacturer, ProductFeature
@@ -8,6 +5,7 @@ from cart.forms import CartAddProductForm
 from shop.utils import paginate
 from shop.filters import get_filters, get_value_and_counts, get_values_ranges
 from shop.forms import ProductFilterForm
+from shop.constants import DIMENSIONS
 
 
 def main_page(request):
@@ -29,8 +27,8 @@ def product_list(request, category_slug):
     manufacturers = Manufacturer.objects.filter(products__in=products).distinct()
     prices = get_values_ranges([product.price for product in products])
 
-    features = {feature: get_values_ranges([f['value'] for f in ProductFeature.objects.filter(
-            feature__name=feature, product__in=products).values()]) for feature in ['Ширина', 'Висота', 'Глибина']}
+    features = {feature[0]: get_values_ranges([f['value'] for f in ProductFeature.objects.filter(
+            feature__name=feature[0], product__in=products).values()]) for feature in DIMENSIONS.values()}
 
     form = ProductFilterForm(data=request.GET)
     data = {k: v for k, v in request.GET.items()}
@@ -38,18 +36,21 @@ def product_list(request, category_slug):
         data = form.cleaned_data
         filters = get_filters(data)
         if filters:
-            for filt in filters:
-                products = products.filter(filt)
+            for f in filters:
+                products = products.filter(f)
     facets = {
         'selected': data,
         'categories': {
             'manufacturers': get_value_and_counts(products, manufacturers, value_name='producer'),
             'price_ranges': get_value_and_counts(products, prices, value_name='price'),
-            'widths': get_value_and_counts(products, features['Ширина'], value_name=['Ширина', 'productfeature']),
-            'depths': get_value_and_counts(products, features['Глибина'], value_name=['Глибина', 'productfeature']),
-            'heights': get_value_and_counts(products, features['Висота'], value_name=['Висота', 'productfeature']),
         },
     }
+    # Update facets for dimensions
+    facets['categories'].update(
+        {feature: get_value_and_counts(products, features[DIMENSIONS[feature][0]], value_name=DIMENSIONS[feature])
+         for feature in DIMENSIONS}
+    )
+
     if sort in sort_dict:
         products = products.order_by(sort_dict[sort])
     context = paginate(products, 20, request, {'products': products}, var_name='products')

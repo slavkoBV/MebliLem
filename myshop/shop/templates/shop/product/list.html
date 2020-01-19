@@ -55,7 +55,7 @@
                                 {% endif %}
                             </li>
                         {% endfor %}
-                    <h5>Ціна:</h5>
+                    <h5>Ціна (грн.):</h5>
                         {% for price_range, pr_count in facets.categories.price_ranges %}
                             <li>
                                 <a {% if facets.selected.price == price_range %}class="active" {% endif %}href="{% modify_query "page" price=price_range %}">
@@ -63,30 +63,36 @@
                                 </a>
                             </li>
                         {% endfor %}
-                    <h5>Ширина:</h5>
-                        {% for width, count in facets.categories.widths %}
+                    {% if facets.categories.width %}
+                    <h5>Ширина, мм:</h5>
+                        {% for width, count in facets.categories.width %}
                             <li>
                                 <a {% if facets.selected.width == width %}class="active" {% endif %}href="{% modify_query "page" width=width %}">
                                     {% if count > 0 %}{{ width }} - ({{ count }}){% endif %}
                                 </a>
                             </li>
                         {% endfor %}
-                     <h5>Висота:</h5>
-                        {% for height, count in facets.categories.heights %}
+                    {% endif %}
+                    {% if facets.categories.height %}
+                     <h5>Висота, мм:</h5>
+                        {% for height, count in facets.categories.height %}
                             <li>
                                 <a {% if facets.selected.height == height %}class="active" {% endif %}href="{% modify_query "page" height=height %}">
                                     {% if count > 0 %}{{ height }} - ({{ count }}){% endif %}
                                 </a>
                             </li>
                         {% endfor %}
-                    <h5>Глибина:</h5>
-                        {% for depth, count in facets.categories.depths %}
+                    {% endif %}
+                    {% if facets.categories.depth %}
+                    <h5>Глибина, мм:</h5>
+                        {% for depth, count in facets.categories.depth %}
                             <li>
                                 <a {% if facets.selected.depth == depth %}class="active" {% endif %}href="{% modify_query "page" depth=depth %}">
                                     {% if count > 0 %}{{ depth }} - ({{ count }}){% endif %}
                                 </a>
                             </li>
                         {% endfor %}
+                    {% endif %}
                 </div>
             </div>
 
@@ -111,7 +117,6 @@
                     {% endfor %}
                 </div>
 			</div>
-
         </div>
 
 {% endblock content %}

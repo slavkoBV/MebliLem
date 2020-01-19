@@ -53,6 +53,7 @@ class FeatureInline(admin.StackedInline):
     model = Feature
     extra = 0
 
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
     inlines = [FeatureInline]
