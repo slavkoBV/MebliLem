@@ -206,3 +206,6 @@ if ACTIVATE_TOOLBAR:
     DEBUG_TOOLBAR_CONFIG = {
         'INTERCEPT_REDIRECTS': False,
     }
+
+
+FIXTURE_DIRS = (os.path.join(BASE_DIR, '..', 'fixtures'),)
