@@ -202,13 +202,25 @@ class ProductFeature(models.Model):
         unique_together = (('feature', 'product'),)
 
 
+def update_filename(instance, filename):
+    path = 'catalogs/'
+    filename, file_ext = filename.split('.')
+    if not is_ascii(filename):
+        filename = slugify(filename)
+    return '{}/{}.{}'.format(path, filename, file_ext)
+
+
+def is_ascii(a_string):
+    return all(ord(c) < 128 for c in a_string)
+
+
 class Catalog(models.Model):
     name = models.CharField(
         max_length=100,
         blank=True,
         verbose_name='Назва')
     file = models.FileField(
-        upload_to='catalogs/',
+        upload_to=update_filename,
         blank=True,
         null=True,
         verbose_name='Файл')
