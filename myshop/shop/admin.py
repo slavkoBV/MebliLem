@@ -5,8 +5,10 @@ from django.http import HttpResponseRedirect
 from django.contrib.admin import AdminSite
 from django.forms import BaseInlineFormSet
 
-
-from shop.models import Category, Product, Catalog, Manufacturer, ProductImage, ProductFeature, Feature
+from shop.models.category import Category
+from shop.models.manufacturer import Manufacturer
+from shop.models.product import Product, ProductFeature, ProductImage, Feature
+from shop.models.catalog import Catalog
 
 
 class ProductFeatureFormSet(BaseInlineFormSet):

@@ -1,6 +1,6 @@
 import requests
 from .models import SearchItem
-from shop.models import Product
+from shop.models.product import Product
 from django.db.models import Q
 
 STRIP_SYMBOLS = ('+', ',', ';')

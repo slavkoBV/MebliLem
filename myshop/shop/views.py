@@ -1,6 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 
-from .models import Category, Product, Catalog, Manufacturer, ProductFeature
+from shop.models.category import Category
+from shop.models.manufacturer import Manufacturer
+from shop.models.product import Product, ProductFeature
+from shop.models.catalog import Catalog
+
 from cart.forms import CartAddProductForm
 from shop.utils import paginate
 from shop.filters import get_filters, get_value_and_counts, get_values_ranges
