@@ -4,6 +4,26 @@ from django.core.urlresolvers import reverse
 from shop.utils import slugify
 
 
+file_storage_mapping = {
+    "Catalog": "catalogs/",
+    "ProductImage": "products/",
+    "Manufacturer": "manufacturers/",
+    "Category": "categories/"
+}
+
+
+def update_filename(instance, filename):
+    path = file_storage_mapping[instance._meta.object_name]
+    filename, file_ext = filename.split('.')
+    if not is_ascii(filename):
+        filename = slugify(filename)
+    return '{}/{}.{}'.format(path, filename, file_ext)
+
+
+def is_ascii(a_string):
+    return all(ord(c) < 128 for c in a_string)
+
+
 class Category(models.Model):
     name = models.CharField(
         max_length=200,
@@ -16,7 +36,7 @@ class Category(models.Model):
         blank=True,
         verbose_name='англ_назва')
     image = models.ImageField(
-        upload_to='categories/',
+        upload_to=update_filename,
         null=True,
         verbose_name='Зображення'
     )
@@ -50,7 +70,7 @@ class Manufacturer(models.Model):
         blank=True,
         verbose_name='Коротка назва')
     image = models.ImageField(
-        upload_to='manufacturers/',
+        upload_to=update_filename,
         blank=True,
         null=True,
         verbose_name='Логотип'
@@ -136,7 +156,7 @@ class Product(models.Model):
 
 class ProductImage(models.Model):
     image = models.ImageField(
-        upload_to='products/',
+        upload_to=update_filename,
         null=True,
         blank=True,
         verbose_name='Фото')
@@ -200,18 +220,6 @@ class ProductFeature(models.Model):
         verbose_name = 'Характеристика товару'
         verbose_name_plural = 'Характеристики товару'
         unique_together = (('feature', 'product'),)
-
-
-def update_filename(instance, filename):
-    path = 'catalogs/'
-    filename, file_ext = filename.split('.')
-    if not is_ascii(filename):
-        filename = slugify(filename)
-    return '{}/{}.{}'.format(path, filename, file_ext)
-
-
-def is_ascii(a_string):
-    return all(ord(c) < 128 for c in a_string)
 
 
 class Catalog(models.Model):
