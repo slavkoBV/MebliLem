@@ -31,11 +31,13 @@ def product_list(request, category_slug):
     manufacturers = Manufacturer.objects.filter(products__in=products).distinct()
     prices = get_values_ranges([product.price for product in products])
 
-    features = {feature[0]: get_values_ranges([f['value'] for f in ProductFeature.objects.filter(
-            feature__name=feature[0], product__in=products).values()]) for feature in DIMENSIONS.values()}
+    features = {DIMENSIONS[feature]: get_values_ranges([f['value']
+                                                        for f in ProductFeature.objects.filter(
+            feature__name=DIMENSIONS[feature], product__in=products).values()]) for feature in DIMENSIONS}
 
     form = ProductFilterForm(data=request.GET)
     data = {k: v for k, v in request.GET.items()}
+
     if form.is_valid():
         data = form.cleaned_data
         filters = get_filters(data)
@@ -51,7 +53,7 @@ def product_list(request, category_slug):
     }
     # Update facets for dimensions
     facets['categories'].update(
-        {feature: get_value_and_counts(products, features[DIMENSIONS[feature][0]], value_name=DIMENSIONS[feature])
+        {feature: get_value_and_counts(products, features[DIMENSIONS[feature]], value_name=feature)
          for feature in DIMENSIONS}
     )
 
