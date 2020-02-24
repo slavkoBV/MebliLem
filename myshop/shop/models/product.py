@@ -119,6 +119,21 @@ class Feature(models.Model):
         return self.name
 
 
+class Dimension(models.Model):
+    feature = models.ForeignKey(Feature, verbose_name='Назва')
+    value = models.IntegerField(verbose_name='Значення')
+    unit = models.CharField(max_length=5, verbose_name='Од. виміру', null=True, blank=True)
+    product = models.ForeignKey(Product, verbose_name='Товар')
+
+    def __str__(self):
+        return ' '.join([str(self.feature.name), str(self.value)])
+
+    class Meta:
+        verbose_name = 'Розмір товару'
+        verbose_name_plural = 'Розміри товару'
+        unique_together = (('feature', 'product'),)
+
+
 class ProductFeature(models.Model):
 
     feature = models.ForeignKey(Feature, verbose_name='Назва', related_name='feature_values')

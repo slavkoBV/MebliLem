@@ -1,5 +1,5 @@
 DIMENSIONS = {
-    'width': ['Ширина', 'productfeature'],
-    'height': ['Висота', 'productfeature'],
-    'depth': ['Глибина', 'productfeature']
+    'width': 'Ширина',
+    'height': 'Висота',
+    'depth': 'Глибина'
 }

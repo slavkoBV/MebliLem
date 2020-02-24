@@ -4,6 +4,53 @@ from django.db.models import Q
 from shop.constants import DIMENSIONS
 
 
+class Filter:
+    def __init__(self, filter_params):
+        """
+
+        :param filter_params: {'name': some_name, 'value': some_value}
+        """
+        self._filter_params = filter_params
+        self.expression = None
+
+    def get_expression(self):
+        pass
+
+    def build_filter_condition(self):
+        self.expression = self.get_expression()
+        return eval(self.expression.format(name=self._filter_params['name'], value=self._filter_params['value']))
+
+
+class DimensionFilter(Filter):
+
+    def __init__(self, filter_params):
+        filter_params['name'] = DIMENSIONS[filter_params['name']]
+        super().__init__(filter_params)
+
+    def get_expression(self):
+        return 'Q(productfeature__feature__name="{name}") &' \
+               ' Q(productfeature__value__range=(map(int, "{value}".split("-"))))'
+
+
+class ManufacturerFilter(Filter):
+    def get_expression(self):
+        return 'Q({name}__name="{value}")'
+
+
+class PriceFilter(Filter):
+    def get_expression(self):
+        return 'Q({name}__range=(map(int, "{value}".split("-"))))'
+
+
+filter_mapping = {
+    'producer': ManufacturerFilter,
+    'price': PriceFilter,
+    'height': DimensionFilter,
+    'width': DimensionFilter,
+    'depth': DimensionFilter
+}
+
+
 def get_clean_values_list(values_list):
     clean_list = []
     for value in values_list:
@@ -48,35 +95,17 @@ def get_value_and_counts(object_list, values_list, value_name):
     :param value_name: name of value for which ranges are determined
     :return: list of tuples(value_range, number of objects that have value in value_range)
     """
-    filter_condition = None
     if values_list:
-        if isinstance(values_list[0], str):
-            if isinstance(value_name, str):
-                filter_condition = 'Q({}__range=(map(int, value.split("-"))))'.format(value_name)
-            else:
-                filter_condition = 'Q({name}__feature__name="{feature}")' \
-                                   '& Q({name}__value__range=(map(int, value.split("-"))))'\
-                    .format(feature=value_name[0], name=value_name[1])
+        if object_list:
+            return [(value, object_list.filter(filter_mapping[value_name](
+                {'name': value_name, 'value': value}
+            ).build_filter_condition())
+                     .count()) for value in values_list]
         else:
-            filter_condition = 'Q({}__name=value)'.format(value_name)
-    if object_list and filter_condition:
-        return [(value, object_list.filter(eval(filter_condition)).count()) for value in values_list]
-    else:
-        return [(value, 0) for value in values_list]
+            return [(value, 0) for value in values_list]
 
 
 def get_filters(data: dict):
-    filter_parameters = data.keys()
-    filters = []
-    for param in filter_parameters:
-        if data[param]:
-            if '-' in data[param]:
-                if param in ('width', 'depth', 'height'):
-                    filters.append(eval('Q(productfeature__feature__name="{feature}") '
-                                        '& Q(productfeature__value__range=(map(int, "{value}".split("-"))))'
-                                        .format(feature=DIMENSIONS[param][0], value=data[param])))
-                else:
-                    filters.append(eval('Q({}__range=(map(int, "{}".split("-"))))'.format(param, data[param])))
-            else:
-                filters.append(eval('Q({}__name="{}")'.format(param, data[param])))
+    filters = [filter_mapping[param]({'name': param, 'value': value}).build_filter_condition()
+               for param, value in data.items() if data[param]]
     return filters
