@@ -28,8 +28,8 @@ class DimensionFilter(Filter):
         super().__init__(filter_params)
 
     def get_expression(self):
-        return 'Q(productfeature__feature__name="{name}") &' \
-               ' Q(productfeature__value__range=(map(int, "{value}".split("-"))))'
+        return 'Q(dimension__feature__name="{name}") &' \
+               ' Q(dimension__value__range=(map(int, "{value}".split("-"))))'
 
 
 class ManufacturerFilter(Filter):
@@ -99,8 +99,7 @@ def get_value_and_counts(object_list, values_list, value_name):
         if object_list:
             return [(value, object_list.filter(filter_mapping[value_name](
                 {'name': value_name, 'value': value}
-            ).build_filter_condition())
-                     .count()) for value in values_list]
+            ).build_filter_condition()).count()) for value in values_list]
         else:
             return [(value, 0) for value in values_list]
 

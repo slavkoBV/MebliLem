@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 
 from shop.models.category import Category
 from shop.models.manufacturer import Manufacturer
-from shop.models.product import Product, ProductFeature
+from shop.models.product import Product, Dimension
 from shop.models.catalog import Catalog
 
 from cart.forms import CartAddProductForm
@@ -32,9 +32,8 @@ def product_list(request, category_slug):
     prices = get_values_ranges([product.price for product in products])
 
     features = {DIMENSIONS[feature]: get_values_ranges([f['value']
-                                                        for f in ProductFeature.objects.filter(
+                                                        for f in Dimension.objects.filter(
             feature__name=DIMENSIONS[feature], product__in=products).values()]) for feature in DIMENSIONS}
-
     form = ProductFilterForm(data=request.GET)
     data = {k: v for k, v in request.GET.items()}
 
@@ -56,7 +55,6 @@ def product_list(request, category_slug):
         {feature: get_value_and_counts(products, features[DIMENSIONS[feature]], value_name=feature)
          for feature in DIMENSIONS}
     )
-
     if sort in sort_dict:
         products = products.order_by(sort_dict[sort])
     context = paginate(products, 20, request, {'products': products}, var_name='products')
