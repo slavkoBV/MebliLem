@@ -66,4 +66,3 @@ def slugify(sequence):
     if '' in words:
         words.remove('')
     return '-'.join(translit(word.lower()) for word in words)
-    
