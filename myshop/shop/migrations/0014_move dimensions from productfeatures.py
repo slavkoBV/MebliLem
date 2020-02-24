@@ -21,14 +21,19 @@ def move_dimensions_from_product_features(apps, schema_editor):
             dimension = Dimension(feature=pf.feature, value=int(pf.value), unit=pf.unit, product=pf.product)
             dimension.save()
         except Exception as error:
-            feature = Feature(name='Максимальна {}'.format(pf.feature.name), category=pf.product.category, is_digit=True)
-            feature.save()
-            values = pf.value.split(get_delimiter(pf.value))
-            dimension_1 = Dimension(feature=pf.feature, value=int(values[0]), unit=pf.unit, product=pf.product)
-            dimension_1.save()
-            dimension_2 = Dimension(feature=feature, value=int(values[1]), unit=pf.unit, product=pf.product)
-            dimension_2.save()
-            continue
+            try:
+                feature = Feature.objects.get(name='Максимальна {}'.format(pf.feature.name), category=pf.product.category)
+            except Exception as error:
+                print(error)
+                feature = Feature(name='Максимальна {}'.format(pf.feature.name), category=pf.product.category, is_digit=True)
+                feature.save()
+            else:
+                values = pf.value.split(get_delimiter(pf.value))
+                dimension_1 = Dimension(feature=pf.feature, value=int(values[0]), unit=pf.unit, product=pf.product)
+                dimension_1.save()
+                dimension_2 = Dimension(feature=feature, value=int(values[1]), unit=pf.unit, product=pf.product)
+                dimension_2.save()
+                continue
 
 
 class Migration(migrations.Migration):
