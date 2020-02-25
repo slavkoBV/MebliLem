@@ -7,7 +7,7 @@ from shop.models.catalog import Catalog
 
 from cart.forms import CartAddProductForm
 from shop.utils import paginate
-from shop.filters import get_filters, get_value_and_counts, get_values_ranges
+from shop.filters.filters_utils import get_filters, get_value_and_counts, get_values_ranges
 from shop.forms import ProductFilterForm
 from shop.constants import DIMENSIONS
 
@@ -31,8 +31,8 @@ def product_list(request, category_slug):
     manufacturers = Manufacturer.objects.filter(products__in=products).distinct()
     prices = get_values_ranges([product.price for product in products])
 
-    features = {DIMENSIONS[feature]: get_values_ranges([f['value']
-                                                        for f in Dimension.objects.filter(
+    dimensions = {
+        DIMENSIONS[feature]: get_values_ranges([f['value'] for f in Dimension.objects.filter(
             feature__name=DIMENSIONS[feature], product__in=products).values()]) for feature in DIMENSIONS}
     form = ProductFilterForm(data=request.GET)
     data = {k: v for k, v in request.GET.items()}
@@ -52,8 +52,8 @@ def product_list(request, category_slug):
     }
     # Update facets for dimensions
     facets['categories'].update(
-        {feature: get_value_and_counts(products, features[DIMENSIONS[feature]], value_name=feature)
-         for feature in DIMENSIONS}
+        {dimension: get_value_and_counts(products, dimensions[DIMENSIONS[dimension]], value_name=dimension)
+         for dimension in DIMENSIONS}
     )
     if sort in sort_dict:
         products = products.order_by(sort_dict[sort])

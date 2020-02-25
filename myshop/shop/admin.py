@@ -5,10 +5,10 @@ from django.http import HttpResponseRedirect
 from django.contrib.admin import AdminSite
 from django.forms import BaseInlineFormSet
 
+from shop.models.catalog import Catalog
 from shop.models.category import Category
 from shop.models.manufacturer import Manufacturer
 from shop.models.product import Product, ProductFeature, ProductImage, Feature
-from shop.models.catalog import Catalog
 
 
 class ProductFeatureFormSet(BaseInlineFormSet):
@@ -56,12 +56,10 @@ class FeatureInline(admin.StackedInline):
     extra = 0
 
 
+@admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name']
     inlines = [FeatureInline]
-
-
-admin.site.register(Category, CategoryAdmin)
 
 
 class ChangeProductPrice(forms.Form):
@@ -110,9 +108,6 @@ class ProductInline(admin.StackedInline):
     verbose_name_plural = 'Компонентні товари'
 
 
-admin.site.register(Manufacturer)
-
-
 class IsComplexProductFilter(admin.SimpleListFilter):
     title = 'Комплексний товар'
     parameter_name = 'is_complex'
@@ -132,6 +127,7 @@ class IsComplexProductFilter(admin.SimpleListFilter):
         return queryset
 
 
+@admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 
     list_display = ['name', 'category', 'price', 'updated']
@@ -153,9 +149,7 @@ class ProductAdmin(admin.ModelAdmin):
     actions = [change_product_price, ]
 
 
-admin.site.register(Product, ProductAdmin)
-
-
+@admin.register(Catalog)
 class CatalogAdmin(admin.ModelAdmin):
     list_display = ['name', 'created', 'updated']
     list_filter = ['created', 'updated']
@@ -165,4 +159,4 @@ AdminSite.site_header = 'Меблі Лем'
 AdminSite.site_title = 'Адміністрування'
 AdminSite.index_title = 'Меблі Лем Адміністрування'
 
-admin.site.register(Catalog, CatalogAdmin)
+admin.site.register(Manufacturer)
