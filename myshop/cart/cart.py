@@ -5,8 +5,8 @@ from shop.models.product import Product
 
 class Cart(object):
     def __init__(self, request):
-        """Initialize the cart
-		"""
+        """Initialize the cart"""
+
         self.session = request.session
         cart = self.session.get(settings.CART_SESSION_ID)
         if not cart:
@@ -16,8 +16,7 @@ class Cart(object):
 
     def add(self, product, quantity=1, update_quantity=False):
         """Add a product to the cart or update its quantity
-
-		"""
+        """
         product_id = str(product.id)
         if product_id not in self.cart:
             self.cart[product_id] = {'quantity': 0,
@@ -36,8 +35,8 @@ class Cart(object):
 
     def remove(self, product):
         """
-		Remove the product from the cart
-		"""
+        Remove the product from the cart
+        """
         product_id = str(product.id)
         if product_id in self.cart:
             del self.cart[product_id]
@@ -46,8 +45,8 @@ class Cart(object):
     def __iter__(self):
         """
         Iterate over the items in the cart and get the products
-		from the database
-		"""
+        from the database
+        """
         product_ids = self.cart.keys()
         # get the product objects and add them to the cart
         products = Product.objects.filter(id__in=product_ids)
