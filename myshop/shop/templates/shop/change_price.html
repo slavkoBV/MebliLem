@@ -6,10 +6,10 @@
    <form action="" method="post">
         {% csrf_token %}
         {{ form }}
-        <p>Нова ціна буде визначена для наступних товарів:</p>
+       <p><strong>Нова ціна буде визначена для наступних товарів:</strong></p>
         <ul>{{ items|unordered_list }}</ul>
         <input type="hidden" name="action" value="change_product_price"/>
-        <input type="submit" name="apply" value="Зберегти" />
+        <input class="btn btn-primary" type="submit" name="apply" value="Зберегти" />
     </form>
 
 {% endblock content %}

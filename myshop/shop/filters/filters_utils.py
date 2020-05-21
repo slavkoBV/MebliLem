@@ -1,5 +1,7 @@
 import math
 
+from django.db.models import Max, Min
+
 from shop.filters.filters import ManufacturerFilter, PriceFilter, DimensionFilter
 
 
@@ -34,17 +36,16 @@ def get_values_ranges(values):
     if values:
         number_of_ranges = int(1 + 3.322 * math.log10(len(values)))
         min_value = min(values)
+        initial_min_value = min_value
         max_value = max(values)
         step = round((max_value - min_value) / number_of_ranges)
-        if number_of_ranges == 1:
-            result.append(str(min_value) + '-' + str(max_value + 1))
-        else:
-            for i in range(number_of_ranges):
-                if i == number_of_ranges - 1:
-                    result.append(str(min_value) + '-' + str(max_value))
-                else:
-                    result.append(str(min_value) + '-' + str(min_value + step - 1))
-                    min_value += step
+        for i in range(number_of_ranges):
+            if i == number_of_ranges - 1 or step <= initial_min_value:
+                result.append(f"{min_value}-{max_value}")
+                break
+            else:
+                result.append(f"{min_value}-{min_value + step-1}")
+                min_value += step
     return result
 
 
@@ -69,3 +70,9 @@ def get_filters(data: dict):
     filters = [filter_mapping[param]({'name': param, 'value': value}).build_filter_condition()
                for param, value in data.items() if data[param]]
     return filters
+
+
+def get_price_range(object_list):
+    max_price = int(object_list.aggregate(Max('price'))['price__max'])
+    min_price = int(object_list.aggregate(Min('price'))['price__min'])
+    return min_price, max_price

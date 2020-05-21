@@ -8,6 +8,7 @@
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static "css/search.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/products.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/jquery-ui.css" %}">
 {% endblock extra_css %}
 {% block content %}
 	<div class="container-fluid">
@@ -19,8 +20,8 @@
                     <h6>Сортування:
                     назва: <a href="{% modify_query "page" sort='namea' %}" {% if request.GET.sort == 'namea' %}class="selected"{% endif %}>А - Я</a> |
                         <a href="{% modify_query "page" sort='named' %}" {% if request.GET.sort == 'named' %}class="selected"{% endif %}>Я - А</a>
-					ціна: <a href="{% modify_query "page" sort='pricea' %}" {% if request.GET.sort == 'pricea' %}class="selected"{% endif %}>зростання</a> |
-                        <a href="{% modify_query "page" sort='priced' %}" {% if request.GET.sort == 'priced' %}class="selected"{% endif %}>спадання</a>
+					ціна: <a href="{% modify_query "page" sort='pasc' %}" {% if request.GET.sort == 'pasc' %}class="selected"{% endif %}>зростання</a> |
+                        <a href="{% modify_query "page" sort='pdesc' %}" {% if request.GET.sort == 'pdesc' %}class="selected"{% endif %}>спадання</a>
                     </h6>
 				</div>
        	</div>
@@ -56,13 +57,10 @@
                             </li>
                         {% endfor %}
                     <h5>Ціна (грн.):</h5>
-                        {% for price_range, pr_count in facets.categories.price_ranges %}
-                            <li>
-                                <a {% if facets.selected.price == price_range %}class="active" {% endif %}href="{% modify_query "page" price=price_range %}">
-                                    {% if pr_count > 0 %}{{ price_range }} - ({{ pr_count }}){% endif %}
-                                </a>
-                            </li>
-                        {% endfor %}
+                        <form action="" method="get" id="price_selector">
+                            <input  class="form-control" name="price" id="price">
+                            <div id="slider-range"></div>
+                        </form>
                     {% if facets.categories.width %}
                     <h5>Ширина, мм:</h5>
                         {% for width, count in facets.categories.width %}
@@ -129,3 +127,44 @@
         {% endwith %}
     {% endif %}
 {% endblock pagination %}
+{% block extra_script %}
+    <script type="text/javascript" src="{% static "js/jquery-ui.min.js" %}"></script>
+    <script>
+
+        let max_price = {{ max_price }};
+        let min_price = {{ min_price }};
+        let abs_max_price = {{ abs_max_price }};
+        let abs_min_price = {{ abs_min_price }};
+        $(function () {
+            $("#slider-range").slider({
+                range: true,
+                min: abs_min_price,
+                max: abs_max_price,
+                values: [min_price, max_price],
+                slide: function (event, ui) {
+                    $("#price").val(ui.values[0] + "-" + ui.values[1]);
+                },
+                change: function (event, ui) {
+                    $("#price_selector").submit();
+                    let url = window.location.toString();
+                    let re = /price=[\d]+-[\d]+/;
+                    let price_range = $("#price").val();
+
+                    if (url.indexOf("?") === -1) {
+                        url = url + "?price=" + price_range;
+                    }
+                    if ((url.indexOf("?") > -1) && (url.indexOf("price") === -1)) {
+                        url = url + "&price=" + price_range;
+                    }
+                    if ((url.indexOf("?price") > -1) || (url.indexOf("&price") > -1)) {
+                        let new_string = "price=" + price_range;
+                        url = url.replace(re, new_string);
+                    }
+                    window.location.assign(url);
+                }
+            });
+            $("#price").val($("#slider-range").slider("values", 0) +
+                "-" + $("#slider-range").slider("values", 1));
+        });
+    </script>
+{% endblock extra_script %}
