@@ -36,11 +36,10 @@ def get_values_ranges(values):
     if values:
         number_of_ranges = int(1 + 3.322 * math.log10(len(values)))
         min_value = min(values)
-        initial_min_value = min_value
         max_value = max(values)
         step = round((max_value - min_value) / number_of_ranges)
         for i in range(number_of_ranges):
-            if i == number_of_ranges - 1 or step <= initial_min_value:
+            if i == number_of_ranges - 1 or step <= 1:
                 result.append(f"{min_value}-{max_value}")
                 break
             else:
