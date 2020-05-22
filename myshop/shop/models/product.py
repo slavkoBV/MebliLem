@@ -56,9 +56,6 @@ class Product(models.Model):
         ordering = ('-created',)
         index_together = (('id', 'slug'),)
 
-    def is_complex(self):
-        return len(self.subitems.all()) > 0
-
     def get_absolute_url(self):
         return reverse('shop:product_detail', args=[self.category.slug, self.id, self.slug])
 
