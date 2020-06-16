@@ -101,10 +101,12 @@
                         <div class="col-xs-6 col-sm-6 col-md-3 col-lg-3 product">
                             <div class="product-item">
                                 <div class="product-thumb">
+                                    {% with product.images.first.image as product_image %}
                                     <a href="{{ product.get_absolute_url }}">
-                                        <img src="{% if product.images.first.image %}{{ product.images.first.image.url }}{% else %}
+                                        <img src="{% if product_image %}{{ product_image.url }}{% else %}
                                             {% static "img/no_image.png" %}{% endif %}">
                                     </a>
+                                    {% endwith %}
                                 </div>
                                 <div class="product_title">
                                     <a href="{{ product.get_absolute_url }}">{{ product.name }}</a>

@@ -29,7 +29,7 @@ def product_list(request, category_slug):
     sort = request.GET.get('sort', '')
     categories = Category.objects.all()
     category = get_object_or_404(Category, slug=category_slug)
-    products = Product.objects.filter(category=category)
+    products = Product.objects.filter(category=category).select_related('category', 'producer', 'complex_product')
     abs_min_price, abs_max_price = get_price_range(products)
     manufacturers = Manufacturer.objects.filter(products__in=products).distinct()
 
