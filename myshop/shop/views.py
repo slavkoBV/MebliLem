@@ -29,13 +29,17 @@ def product_list(request, category_slug):
     sort = request.GET.get('sort', '')
     categories = Category.objects.all()
     category = get_object_or_404(Category, slug=category_slug)
-    products = Product.objects.filter(category=category).select_related('category', 'producer', 'complex_product')
+    products = Product.objects.filter(category=category).select_related('category')
     abs_min_price, abs_max_price = get_price_range(products)
     manufacturers = Manufacturer.objects.filter(products__in=products).distinct()
 
-    dimensions = {
-        DIMENSIONS[feature]: get_values_ranges([f['value'] for f in Dimension.objects.filter(
-            feature__name=DIMENSIONS[feature], product__in=products).values()]) for feature in DIMENSIONS}
+    dimensions = {}
+    for feature in DIMENSIONS:
+        dimension_queryset = Dimension.objects.filter(feature__name=DIMENSIONS[feature], product__in=products)
+        dim_max = dimension_queryset.aggregate(Max('value'))['value__max']
+        dim_min = dimension_queryset.aggregate(Min('value'))['value__min']
+        dim_count = dimension_queryset.count()
+        dimensions.update({DIMENSIONS[feature]: get_values_ranges(dim_min, dim_max, dim_count)})
 
     data = {k: v for k, v in request.GET.items()}
     prices = data['price'].split('-') if data.get('price') else (None, None)
@@ -78,8 +82,8 @@ def product_list(request, category_slug):
 
 def product_detail(request, id, slug, category_slug):
     product = get_object_or_404(Product, id=id, slug=slug)
-    subitems = product.subitems.all()
-    product_features = product.productfeature_set.all().order_by('feature')
+    subitems = product.subitems.all().prefetch_related('images')
+    product_features = product.productfeature_set.select_related('feature').order_by('feature')
     cart_product_form = CartAddProductForm()
     return render(request,
                   'shop/product/detail.html',

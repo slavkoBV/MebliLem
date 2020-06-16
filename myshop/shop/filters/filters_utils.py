@@ -14,29 +14,14 @@ filter_mapping = {
 }
 
 
-def get_clean_values_list(values_list):
-    clean_list = []
-    for value in values_list:
-        if hasattr(value, 'isdigit') and not value.isdigit():
-            delimiter = next(i for i in value if not i.isdigit())
-            clean_list.extend(value.split(delimiter))
-        else:
-            clean_list.append(value)
-    return clean_list
+def get_values_ranges(min_value, max_value, total_count):
+    """ Return list of ranges, such as ['0 - 99', '100 - 199'] etc.
 
-
-def get_values_ranges(values):
-    """
-
-    :param values: list of values
-    :return: list of ranges, such as ['0 - 99', '100 - 199'] etc.
     """
     result = []
-    values = set(int(value) for value in get_clean_values_list(values))
-    if values:
-        number_of_ranges = int(1 + 3.322 * math.log10(len(values)))
-        min_value = min(values)
-        max_value = max(values)
+    # values = set(int(value) for value in get_clean_values_list(values))
+    if total_count:
+        number_of_ranges = int(1 + 3.322 * math.log10(total_count))
         step = round((max_value - min_value) / number_of_ranges)
         for i in range(number_of_ranges):
             if i == number_of_ranges - 1 or step <= 1:

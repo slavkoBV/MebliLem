@@ -7,12 +7,13 @@
       <li><a href="{{ product.category.get_absolute_url }}">{{ product.category }}</a></li>
       <li class="active">{{ product.name }}</li>
     </ol>
-		{% if product.images.first.image.url %}
+        {% with product.images.first as image %}
+		{% if image.image.url %}
 			<div id="gallery">
 			    <div id="panel">
                     <div class="image_container">
-                        <a data-fancybox href="{{ product.images.first.image.url }}">
-                            <img id="largeImage" src="{{ product.images.first.image.url }}">
+                        <a data-fancybox href="{{ image.image.url }}">
+                            <img id="largeImage" src="{{ image.image.url }}">
                         </a>
                     </div>
 			    </div>
@@ -27,6 +28,7 @@
 				<img src="{% static "img/no_image.png" %}">
 			</div>
 		{% endif %}
+        {% endwith %}
 		<div class="detail-description">
 			<h2>{{ product.name }}</h2>
 			<p class="price">{{ product.price }} грн.</p>
