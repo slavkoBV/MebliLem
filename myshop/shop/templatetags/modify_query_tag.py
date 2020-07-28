@@ -9,14 +9,13 @@ register = template.Library()
 def modify_query(context, *params_to_remove, **params_to_change):
     """Render a link with modified current query parameters"""
     query_params = []
-    for key, value_list in context['request'].GET._iterlists():
+    for key, value in context['request'].GET.items():
         if key not in params_to_remove:
             if key in params_to_change:
                 query_params.append((key, params_to_change[key]))
                 params_to_change.pop(key)
             else:
-                for value in value_list:
-                    query_params.append((key, value))
+                query_params.append((key, value))
     for key, value in params_to_change.items():
         query_params.append((key, value))
     query_string = context['request'].path

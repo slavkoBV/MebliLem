@@ -22,7 +22,6 @@ def order_created(order_id):
     from_email = Email(ADMIN_EMAIL)
     to_email = Email(order.email)
 
-
     # subject2 = 'Поступило Замовлення (Меблі-Лем)'
     # message_admin = 'Замовник {0} {1} з {2} \n оформив замовлення № {3}'.format(order.first_name,
     #                                                                            order.last_name, order.address,
@@ -33,6 +32,7 @@ def order_created(order_id):
     response = sg.client.mail.send.post(request_body=mail.get())
 
     return response
+
 
 """
     mail_admin = Mail(from_email, subject2, from_email, content_admin)
