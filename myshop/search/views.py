@@ -3,10 +3,13 @@ from shop.utils import paginate
 from search import search
 
 from shop.models.product import Product
+from shop.utils import get_message, MessageWords
 
-dict_message = {('1',): 'товар',
-                ('2', '3', '4'): 'товари',
-                ('0', '5', '6', '7', '8', '9'): 'товарів'}
+
+RESULTS = MessageWords(singular='товар',
+                       plural='товари',
+                       plural_genitive='товарів')
+
 
 sort_dict = {'namea': 'name', 'pricea': 'price', 'named': '-name', 'priced': '-price'}
 
@@ -19,13 +22,7 @@ def products_search_results(request):
     search_params = ('name', 'category__name')
     matches = search.search_objects(q, products, search_params, sort_param)
     matches_len = len(matches)
-    message = ''
-    if len(str(matches_len)) == 2 and str(matches_len).startswith('1'):
-        message = 'товарів'
-    else:
-        for i in dict_message.keys():
-            if str(matches_len)[-1] in i:
-                message = dict_message[i]
+    message = get_message(matches_len, RESULTS)
 
     context = paginate(matches, 12, request, {'matches': matches}, var_name='matches')
     context['q'] = q

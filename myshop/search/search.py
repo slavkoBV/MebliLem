@@ -9,6 +9,7 @@ from .models import SearchItem
 from myshop.logger import logger
 
 STRIP_SYMBOLS = ('+', ',', ';')
+IP_API_URL = 'http://api.2ip.ua/geo.json?ip'
 
 
 def store(request, q):
@@ -31,8 +32,7 @@ def store(request, q):
             clients = SearchItem.objects.values('ip_address').filter(ip_address__contains=client_ip)
             if len(clients) == 0:
                 try:
-                    # Get geo data about IP from 2IP.ua API
-                    url = 'http://api.2ip.ua/geo.json?ip=' + client_ip
+                    url = ''.join((IP_API_URL, '=', client_ip))
                     geo_response = requests.get(url).json()
                     term.IP_location = geo_response['country'] + ', ' + geo_response['city']
                 except Exception as er:

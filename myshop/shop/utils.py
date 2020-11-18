@@ -1,3 +1,5 @@
+from collections import namedtuple
+
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -66,3 +68,26 @@ def slugify(sequence):
     if '' in words:
         words.remove('')
     return '-'.join(translit(word.lower()) for word in words)
+
+
+MessageWords = namedtuple('MessageWords', ['singular', 'plural', 'plural_genitive'])
+
+
+def get_message(number_of_items: int, nouns: MessageWords) -> str:
+    """
+
+    :param number_of_items: int
+    :param nouns: namedtuple of ukrainian noun forms(singular, plural, plural in genitive case)
+    :return: str
+    """
+    dict_message = {('1',): nouns.singular,
+                    ('2', '3', '4'): nouns.plural,
+                    ('0', '5', '6', '7', '8', '9'): nouns.plural_genitive}
+    message = ''
+    if len(str(number_of_items)) == 2 and str(number_of_items).startswith('1'):
+        message = nouns.plural
+    else:
+        for i in dict_message.keys():
+            if str(number_of_items)[-1] in i:
+                message = dict_message[i]
+    return message
