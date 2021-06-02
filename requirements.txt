@@ -20,6 +20,6 @@ pytz==2018.3
 requests==2.22.0
 sendgrid==4.2.1
 sqlparse==0.3.0
-urllib3==1.25.7
+urllib3==1.26.5
 vine==1.1.4
 zipp==2.0.1
